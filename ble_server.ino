@@ -13,7 +13,7 @@ class MyServerCallbacks : public BLEServerCallbacks {
   void onConnect(BLEServer* pServer) {
     deviceConnected = true;
     Serial.println("Device connected");
-  };
+  }
 
   void onDisconnect(BLEServer* pServer) {
     deviceConnected = false;
@@ -34,9 +34,11 @@ void setup() {
   pCharacteristic = pService->createCharacteristic(
                       CHARACTERISTIC_UUID,
                       BLECharacteristic::PROPERTY_READ |
-                      BLECharacteristic::PROPERTY_WRITE
+                      BLECharacteristic::PROPERTY_WRITE |
+                      BLECharacteristic::PROPERTY_NOTIFY
                     );
 
+  pCharacteristic->addDescriptor(new BLE2902());
   pCharacteristic->setValue("Hello World");
   pService->start();
 
@@ -46,5 +48,14 @@ void setup() {
 }
 
 void loop() {
-  // Do nothing here
+  if (deviceConnected) {
+    static uint32_t counter = 0;
+    char data[20];
+    sprintf(data, "Data %d", counter++);
+    pCharacteristic->setValue(data);
+    pCharacteristic->notify();
+    Serial.print("Sent: ");
+    Serial.println(data);
+    delay(1000); // Notify every second
+  }
 }
