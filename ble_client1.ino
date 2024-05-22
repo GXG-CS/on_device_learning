@@ -1,112 +1,109 @@
 #include <BLEDevice.h>
 #include <BLEUtils.h>
-#include <BLEScan.h>
-#include <BLEAdvertisedDevice.h>
+#include <BLEClient.h>
+#include <BLEAddress.h>
 
+#define SERVER_NAME "ESP32_BLE_Server"
 #define SERVICE_UUID "d8c1e1e3-7e68-4d84-9f91-c1e6d47dbdd7"
 #define CHARACTERISTIC_UUID "f364a19d-36b5-4f3b-a53a-fdbb3d14e4b5"
 
-static BLEAddress *pServerAddress;
-static boolean doConnect = false;
+static BLEAddress *pServerAddress = nullptr;
 static boolean connected = false;
-static BLERemoteCharacteristic* pRemoteCharacteristic;
-static unsigned long scanStartTime;
-static unsigned long scanDuration = 60000; // 60 seconds
-
-class MyClientCallback : public BLEClientCallbacks {
-  void onConnect(BLEClient* pclient) {
-    connected = true;
-    Serial.println("Connected to the server");
-  }
-
-  void onDisconnect(BLEClient* pclient) {
-    connected = false;
-    Serial.println("Disconnected from the server");
-  }
-};
-
-bool connectToServer(BLEAddress pAddress) {
-  Serial.print("Connecting to server: ");
-  Serial.println(pAddress.toString().c_str());
-
-  BLEClient*  pClient  = BLEDevice::createClient();
-  pClient->setClientCallbacks(new MyClientCallback());
-  pClient->connect(pAddress);
-
-  Serial.println("Connected to server");
-
-  BLERemoteService* pRemoteService = pClient->getService(SERVICE_UUID);
-  if (pRemoteService == nullptr) {
-    Serial.println("Failed to find our service UUID");
-    pClient->disconnect();
-    return false;
-  }
-
-  pRemoteCharacteristic = pRemoteService->getCharacteristic(CHARACTERISTIC_UUID);
-  if (pRemoteCharacteristic == nullptr) {
-    Serial.println("Failed to find our characteristic UUID");
-    pClient->disconnect();
-    return false;
-  }
-
-  if (pRemoteCharacteristic->canRead()) {
-    std::string value = pRemoteCharacteristic->readValue();
-    Serial.print("The characteristic value was: ");
-    Serial.println(value.c_str());
-  }
-
-  connected = true;
-  return true;
-}
+static BLERemoteCharacteristic* pRemoteCharacteristic = nullptr;
 
 class MyAdvertisedDeviceCallbacks: public BLEAdvertisedDeviceCallbacks {
   void onResult(BLEAdvertisedDevice advertisedDevice) {
     Serial.print("Advertised Device found: ");
     Serial.println(advertisedDevice.toString().c_str());
 
-    if (advertisedDevice.haveServiceUUID() && advertisedDevice.isAdvertisingService(BLEUUID(SERVICE_UUID))) {
-      Serial.print("Found our device! Address: ");
-      Serial.println(advertisedDevice.getAddress().toString().c_str());
-      pServerAddress = new BLEAddress(advertisedDevice.getAddress());
-      doConnect = true;
+    if (advertisedDevice.haveName() && advertisedDevice.getName() == SERVER_NAME) {
+      Serial.println("Found our device!");
       BLEDevice::getScan()->stop();
+      pServerAddress = new BLEAddress(advertisedDevice.getAddress());
     }
   }
 };
 
+class MyClientCallback : public BLEClientCallbacks {
+  void onConnect(BLEClient* pClient) {
+    connected = true;
+    Serial.println("Connected to server");
+  }
+
+  void onDisconnect(BLEClient* pClient) {
+    connected = false;
+    Serial.println("Disconnected from server");
+  }
+};
+
+void notificationCallback(BLERemoteCharacteristic* pBLERemoteCharacteristic, uint8_t* pData, size_t length, bool isNotify) {
+  Serial.print("Notification received: ");
+  Serial.write(pData, length);
+  Serial.println();
+}
+
+bool connectToServer(BLEAddress pAddress) {
+  BLEClient* pClient = BLEDevice::createClient();
+  pClient->setClientCallbacks(new MyClientCallback());
+
+  Serial.print("Connecting to server: ");
+  Serial.println(pAddress.toString().c_str());
+
+  if (!pClient->connect(pAddress)) {
+    Serial.println("Failed to connect to server");
+    return false;
+  }
+  Serial.println("Connected to server");
+
+  BLERemoteService* pRemoteService = pClient->getService(SERVICE_UUID);
+  if (pRemoteService == nullptr) {
+    Serial.print("Failed to find our service UUID: ");
+    Serial.println(SERVICE_UUID);
+    pClient->disconnect();
+    return false;
+  }
+  Serial.println("Found our service");
+
+  pRemoteCharacteristic = pRemoteService->getCharacteristic(CHARACTERISTIC_UUID);
+  if (pRemoteCharacteristic == nullptr) {
+    Serial.print("Failed to find our characteristic UUID: ");
+    Serial.println(CHARACTERISTIC_UUID);
+    pClient->disconnect();
+    return false;
+  }
+  Serial.println("Found our characteristic");
+
+  if (pRemoteCharacteristic->canNotify()) {
+    pRemoteCharacteristic->registerForNotify(notificationCallback);
+  }
+
+  return true;
+}
+
 void setup() {
   Serial.begin(115200);
-  delay(1000);
-  Serial.println("Starting BLE Client...");
+  Serial.println("Starting Arduino BLE Client application...");
 
   BLEDevice::init("");
 
   BLEScan* pBLEScan = BLEDevice::getScan();
   pBLEScan->setAdvertisedDeviceCallbacks(new MyAdvertisedDeviceCallbacks());
   pBLEScan->setActiveScan(true);
+  Serial.println("Scanning for BLE devices...");
+  BLEScanResults scanResults = pBLEScan->start(30); // Scan for 30 seconds
 
-  scanStartTime = millis();
-  pBLEScan->start(scanDuration / 1000);
-  Serial.println("Scanning started...");
+  if (pServerAddress != nullptr) {
+    Serial.println("Found server, attempting to connect...");
+    if (connectToServer(*pServerAddress)) {
+      Serial.println("Connected to server successfully");
+    } else {
+      Serial.println("Failed to connect to the server");
+    }
+  } else {
+    Serial.println("Failed to find BLE server.");
+  }
 }
 
 void loop() {
-  if (doConnect == true) {
-    if (connectToServer(*pServerAddress)) {
-      Serial.println("We are now connected to the BLE Server.");
-    } else {
-      Serial.println("We have failed to connect to the server; there is nothing more we will do.");
-    }
-    doConnect = false;
-  }
-
-  if (connected) {
-    // Logic when connected to the BLE server
-  } else if (millis() - scanStartTime > scanDuration) {
-    Serial.println("Failed to find the BLE Server within the scan time.");
-    BLEDevice::getScan()->stop();
-    scanStartTime = millis(); // reset scan start time
-  }
-
-  delay(1000);
+  // Do nothing here.
 }
