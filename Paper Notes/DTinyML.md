@@ -1,10 +1,11 @@
-# Core
+# DTinyML
 
 
 
 
 - [[BLE Mesh Network]]
 - [[TinyML]]
+- [[Distributed Learning]]
 
 # get me a paper list below 
 - [ ] [Towards energy-aware tinyML on battery-less IoT devices]
