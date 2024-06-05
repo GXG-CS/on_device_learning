@@ -39,3 +39,6 @@ async def connect_to_device():
 
 loop = asyncio.get_event_loop()
 loop.run_until_complete(connect_to_device())
+
+
+
