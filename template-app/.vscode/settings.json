@@ -1,0 +1,21 @@
+{
+  "C_Cpp.intelliSenseEngine": "default",
+  "idf.adapterTargetName": "esp32",
+  "idf.portWin": "COM6",
+  "idf.openOcdConfigs": [
+    "board/esp32-wrover-kit-3.3v.cfg"
+  ],
+  "terminal.integrated.profiles.windows": {
+    "PowerShell": {
+      "source": "PowerShell",
+      "args": [
+        "-NoExit",
+        "-Command",
+        "& { . 'C:\\Users\\GXG\\esp\\v5.2.2\\esp-idf\\export.ps1' }"
+      ]
+    }
+  },
+  "terminal.integrated.defaultProfile.windows": "PowerShell",
+  "idf.pythonBinPathWin": "C:\\Users\\GXG\\.espressif\\python_env\\idf5.2_py3.11_env\\Scripts\\python.exe",
+  "cmake.cmakePath": "C:\\Program Files\\CMake\\bin\\cmake.exe"
+}
