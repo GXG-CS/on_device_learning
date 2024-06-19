@@ -17,5 +17,10 @@
   },
   "terminal.integrated.defaultProfile.windows": "PowerShell",
   "idf.pythonBinPathWin": "C:\\Users\\GXG\\.espressif\\python_env\\idf5.2_py3.11_env\\Scripts\\python.exe",
-  "cmake.cmakePath": "C:\\Program Files\\CMake\\bin\\cmake.exe"
+  "cmake.cmakePath": "C:\\Program Files\\CMake\\bin\\cmake.exe",
+  "files.associations": {
+    "esp_mac.h": "c",
+    "esp_gap_ble_api.h": "c",
+    "inttypes.h": "c"
+  }
 }
