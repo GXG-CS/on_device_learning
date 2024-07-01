@@ -1,4 +1,4 @@
-# Install script for directory: C:/Users/GXG/Research/on_device_learning/provisioner2/main
+# Install script for directory: C:/Users/GXG/Research/on_device_learning/projects/provisioner2/main
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
