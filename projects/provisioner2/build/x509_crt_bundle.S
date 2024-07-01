@@ -1,4 +1,4 @@
-/* * Data converted from C:/Users/GXG/Research/on_device_learning/provisioner2/build/esp-idf/mbedtls/x509_crt_bundle
+/* * Data converted from C:/Users/GXG/Research/on_device_learning/projects/provisioner2/build/esp-idf/mbedtls/x509_crt_bundle
  */
 .data
 .section .rodata.embedded

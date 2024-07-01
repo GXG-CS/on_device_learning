@@ -3,5 +3,6 @@
     "idf.openOcdConfigs": [
         "board/esp32-wrover-kit-3.3v.cfg"
     ],
-    "idf.portWin": "COM6"
+    "idf.portWin": "COM7",
+    "cmake.sourceDirectory": "C:/Users/GXG/Research/on_device_learning/projects/onoff_models/onoff_client"
 }
