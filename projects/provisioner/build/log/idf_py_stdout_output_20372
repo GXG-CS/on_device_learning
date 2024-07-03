@@ -1,0 +1,73 @@
+[1/5] cmd.exe /C "cd /D D:\Projects\on_device_learning\projects\provisioner\build\esp-idf\esptool_py && C:\Users\gxg_c\.espressif\python_env\idf5.2_py3.11_env\Scripts\python.exe D:/esp/esp-idf/components/partition_table/check_sizes.py --offset 0x8000 partition --type app D:/Projects/on_device_learning/projects/provisioner/build/partition_table/partition-table.bin D:/Projects/on_device_learning/projects/provisioner/build/provisioner.bin"
+provisioner.bin binary size 0x1015f0 bytes. Smallest app partition is 0x177000 bytes. 0x75a10 bytes (31%) free.
+[2/5] Performing build step for 'bootloader'
+[1/1] cmd.exe /C "cd /D D:\Projects\on_device_learning\projects\provisioner\build\bootloader\esp-idf\esptool_py && C:\Users\gxg_c\.espressif\python_env\idf5.2_py3.11_env\Scripts\python.exe D:/esp/esp-idf/components/partition_table/check_sizes.py --offset 0x8000 bootloader 0x1000 D:/Projects/on_device_learning/projects/provisioner/build/bootloader/bootloader.bin"
+Bootloader binary size 0x6860 bytes. 0x7a0 bytes (7%) free.
+[2/3] cmd.exe /C "cd /D D:\esp\esp-idf\components\esptool_py && C:\Users\gxg_c\.espressif\tools\cmake\3.24.0\bin\cmake.exe -D IDF_PATH=D:/esp/esp-idf -D SERIAL_TOOL=C:/Users/gxg_c/.espressif/python_env/idf5.2_py3.11_env/Scripts/python.exe;;D:/esp/esp-idf/components/esptool_py/esptool/esptool.py;--chip;esp32 -D SERIAL_TOOL_ARGS=--before=default_reset;--after=hard_reset;write_flash;@flash_args -D WORKING_DIRECTORY=D:/Projects/on_device_learning/projects/provisioner/build -P D:/esp/esp-idf/components/esptooesptool.py --chip esp32 -p COM5 -b 460800 --before=default_reset --after=hard_reset write_flash --flash_mode dio --flash_freq 40m --flash_size 2MB 0x1000 bootloader/bootloader.bin 0x10000 provisioner.bin 0x8000 partition_table/partition-table.bin
+esptool.py v4.7.0
+Serial port COM5
+Connecting....
+Chip is ESP32-D0WDQ6-V3 (revision v3.0)
+Features: WiFi, BT, Dual Core, 240MHz, VRef calibration in efuse, Coding Scheme None
+Crystal is 40MHz
+MAC: b0:b2:1c:51:e5:30
+Uploading stub...
+Running stub...
+Stub running...
+Changing baud rate to 460800
+Changed.
+Configuring flash size...
+Flash will be erased from 0x00001000 to 0x00007fff...
+Flash will be erased from 0x00010000 to 0x00111fff...
+Flash will be erased from 0x00008000 to 0x00008fff...
+Compressed 26720 bytes to 16342...
+Writing at 0x00001000... (100 %)
+Wrote 26720 bytes (16342 compressed) at 0x00001000 in 1.5 seconds (effective 138.3 kbit/s)...
+Hash of data verified.
+Compressed 1054192 bytes to 584784...
+Writing at 0x00010000... (2 %)
+Writing at 0x0001f701... (5 %)
+Writing at 0x0003179c... (8 %)
+Writing at 0x0003e634... (11 %)
+Writing at 0x00049db0... (13 %)
+Writing at 0x0004f713... (16 %)
+Writing at 0x000553a5... (19 %)
+Writing at 0x0005b2ca... (22 %)
+Writing at 0x00060dcf... (25 %)
+Writing at 0x000667e7... (27 %)
+Writing at 0x0006c369... (30 %)
+Writing at 0x00072b6a... (33 %)
+Writing at 0x00078ab2... (36 %)
+Writing at 0x0007f667... (38 %)
+Writing at 0x000860c4... (41 %)
+Writing at 0x0008bf35... (44 %)
+Writing at 0x000924b1... (47 %)
+Writing at 0x00099ea8... (50 %)
+Writing at 0x000a0c06... (52 %)
+Writing at 0x000a6d35... (55 %)
+Writing at 0x000acde4... (58 %)
+Writing at 0x000b2c2c... (61 %)
+Writing at 0x000b8ccf... (63 %)
+Writing at 0x000bf05c... (66 %)
+Writing at 0x000c4db5... (69 %)
+Writing at 0x000ca64c... (72 %)
+Writing at 0x000d078c... (75 %)
+Writing at 0x000d6a0f... (77 %)
+Writing at 0x000dc993... (80 %)
+Writing at 0x000e2c18... (83 %)
+Writing at 0x000e9170... (86 %)
+Writing at 0x000f01b6... (88 %)
+Writing at 0x000f973e... (91 %)
+Writing at 0x001013d9... (94 %)
+Writing at 0x00106be7... (97 %)
+Writing at 0x0010cedc... (100 %)
+Wrote 1054192 bytes (584784 compressed) at 0x00010000 in 18.0 seconds (effective 469.7 kbit/s)...
+Hash of data verified.
+Compressed 3072 bytes to 105...
+Writing at 0x00008000... (100 %)
+Wrote 3072 bytes (105 compressed) at 0x00008000 in 0.2 seconds (effective 159.3 kbit/s)...
+Hash of data verified.
+
+Leaving...
+Hard resetting via RTS pin...
+l_py/run_serial_tool.cmake"

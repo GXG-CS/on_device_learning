@@ -21,12 +21,7 @@
 #include "esp_ble_mesh_config_model_api.h"
 #include "esp_ble_mesh_generic_model_api.h"
 
-#include "esp_bt.h"
-#include "esp_bt_main.h"
-#include "esp_bt_device.h"
-
-
-// #include "ble_mesh_example_init.h"
+#include "ble_mesh_example_init.h"
 
 #define TAG "EXAMPLE"
 
@@ -48,12 +43,38 @@
 
 static uint8_t dev_uuid[16];
 
+// typedef struct {
+//     uint8_t  uuid[16];
+//     uint16_t unicast;
+//     uint8_t  elem_num;
+//     uint8_t  onoff;
+// } esp_ble_mesh_node_info_t;
+
 typedef struct {
     uint8_t  uuid[16];
     uint16_t unicast;
     uint8_t  elem_num;
     uint8_t  onoff;
+    uint32_t memory;        // Memory in KB
+    uint32_t processing_power; // Processing power in MHz
+    // Add other fields as necessary
 } esp_ble_mesh_node_info_t;
+
+
+typedef struct {
+    uint32_t memory;
+    uint32_t processing_power;
+} custom_status_t;
+
+typedef struct {
+    esp_ble_mesh_model_t *model;
+    esp_ble_mesh_msg_ctx_t *ctx;
+    uint32_t opcode;
+    uint8_t *data;
+    uint16_t length;
+} custom_model_cb_param_t;
+
+
 
 static esp_ble_mesh_node_info_t nodes[CONFIG_BLE_MESH_MAX_PROV_NODES] = {0};
 
@@ -65,53 +86,6 @@ static struct esp_ble_mesh_key {
 
 static esp_ble_mesh_client_t config_client;
 static esp_ble_mesh_client_t onoff_client;
-
-
-void ble_mesh_get_dev_uuid(uint8_t *dev_uuid) {
-    if (dev_uuid == NULL) {
-        ESP_LOGE(TAG, "%s, Invalid device uuid", __func__);
-        return;
-    }
-
-    /* Copy device address to the device uuid with offset equals to 2 here.
-     * The first two bytes is used for matching device uuid by Provisioner.
-     * And using device address here is to avoid using the same device uuid
-     * by different unprovisioned devices.
-     */
-    memcpy(dev_uuid + 2, esp_bt_dev_get_address(), BD_ADDR_LEN);
-}
-
-esp_err_t bluetooth_init(void) {
-    esp_err_t ret;
-
-    ESP_ERROR_CHECK(esp_bt_controller_mem_release(ESP_BT_MODE_CLASSIC_BT));
-
-    esp_bt_controller_config_t bt_cfg = BT_CONTROLLER_INIT_CONFIG_DEFAULT();
-    ret = esp_bt_controller_init(&bt_cfg);
-    if (ret) {
-        ESP_LOGE(TAG, "%s initialize controller failed", __func__);
-        return ret;
-    }
-
-    ret = esp_bt_controller_enable(ESP_BT_MODE_BLE);
-    if (ret) {
-        ESP_LOGE(TAG, "%s enable controller failed", __func__);
-        return ret;
-    }
-
-    ret = esp_bluedroid_init();
-    if (ret) {
-        ESP_LOGE(TAG, "%s init bluetooth failed", __func__);
-        return ret;
-    }
-    ret = esp_bluedroid_enable();
-    if (ret) {
-        ESP_LOGE(TAG, "%s enable bluetooth failed", __func__);
-        return ret;
-    }
-
-    return ret;
-}
 
 static esp_ble_mesh_cfg_srv_t config_server = {
     /* 3 transmissions with 20ms interval */
@@ -132,10 +106,51 @@ static esp_ble_mesh_cfg_srv_t config_server = {
     .default_ttl = 7,
 };
 
+
+
+// ------------------query_node_capabilities-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+// Define Custom Model and Operations
+
+// Custom Model Operation Codes
+#define OP_NODE_CAPABILITIES_GET 0xC001
+#define OP_NODE_CAPABILITIES_STATUS 0xC002
+
+// Define the custom model operations
+static const esp_ble_mesh_client_op_pair_t custom_model_op[] = {
+    { OP_NODE_CAPABILITIES_GET, 1 },
+    { OP_NODE_CAPABILITIES_STATUS, 2 },
+};
+
+
+// Define the custom client model operations
+static esp_ble_mesh_model_op_t custom_model_ops[] = {
+    ESP_BLE_MESH_MODEL_OP(OP_NODE_CAPABILITIES_STATUS, sizeof(custom_status_t)),
+    ESP_BLE_MESH_MODEL_OP_END,
+};
+
+static esp_ble_mesh_client_t custom_client = {
+    .op_pair = custom_model_op,
+    .op_pair_size = ARRAY_SIZE(custom_model_op),
+};
+
+// Define the custom model macro
+#define ESP_BLE_MESH_MODEL_CUSTOM(cli_pub, cli_data) \
+    {                                                \
+        .model_id = 0xFFFF,                          \
+        .op = custom_model_ops,                      \
+        .keys = { ESP_BLE_MESH_KEY_UNUSED },         \
+        .pub = cli_pub,                              \
+        .user_data = cli_data                        \
+    }
+
+
+
+// Initialize the root models array
 static esp_ble_mesh_model_t root_models[] = {
     ESP_BLE_MESH_MODEL_CFG_SRV(&config_server),
     ESP_BLE_MESH_MODEL_CFG_CLI(&config_client),
     ESP_BLE_MESH_MODEL_GEN_ONOFF_CLI(NULL, &onoff_client),
+    ESP_BLE_MESH_MODEL_CUSTOM(NULL, &custom_client) // Use the custom model macro
 };
 
 static esp_ble_mesh_elem_t elements[] = {
@@ -216,7 +231,18 @@ static esp_err_t example_ble_mesh_set_msg_common(esp_ble_mesh_client_common_para
                                                  esp_ble_mesh_node_info_t *node,
                                                  esp_ble_mesh_model_t *model, uint32_t opcode)
 {
-    if (!common || !node || !model) {
+    ESP_LOGI(TAG, "Entering example_ble_mesh_set_msg_common");
+
+    if (!common) {
+        ESP_LOGE(TAG, "Invalid argument: common is NULL");
+        return ESP_ERR_INVALID_ARG;
+    }
+    if (!node) {
+        ESP_LOGE(TAG, "Invalid argument: node is NULL");
+        return ESP_ERR_INVALID_ARG;
+    }
+    if (!model) {
+        ESP_LOGE(TAG, "Invalid argument: model is NULL");
         return ESP_ERR_INVALID_ARG;
     }
 
@@ -231,8 +257,109 @@ static esp_err_t example_ble_mesh_set_msg_common(esp_ble_mesh_client_common_para
     common->msg_role = MSG_ROLE;
 #endif
 
+    ESP_LOGI(TAG, "Common parameters set:");
+    ESP_LOGI(TAG, "Opcode: 0x%08lx", (unsigned long)common->opcode);
+    ESP_LOGI(TAG, "Model: %p", common->model);
+    ESP_LOGI(TAG, "Addr: 0x%04x", common->ctx.addr);
+    ESP_LOGI(TAG, "NetIdx: 0x%04x", common->ctx.net_idx);
+    ESP_LOGI(TAG, "AppIdx: 0x%04x", common->ctx.app_idx);
+    ESP_LOGI(TAG, "TTL: %d", common->ctx.send_ttl);
+
+    ESP_LOGI(TAG, "Exiting example_ble_mesh_set_msg_common");
+
     return ESP_OK;
 }
+
+
+
+
+// Send Custom Message
+static esp_err_t send_node_capabilities_get(esp_ble_mesh_node_info_t *node)
+{
+    esp_ble_mesh_client_common_param_t common = {0};
+    esp_err_t err;
+
+    ESP_LOGI(TAG, "Entering send_node_capabilities_get for node 0x%04x", node->unicast);
+
+    err = example_ble_mesh_set_msg_common(&common, node, &root_models[3], OP_NODE_CAPABILITIES_GET);
+    if (err != ESP_OK) {
+        ESP_LOGE(TAG, "Failed to set common message parameters");
+        return err;
+    }
+
+    uint8_t payload[2] = {0x01, 0x02};
+    size_t payload_size = sizeof(payload);
+
+    if (payload_size > 384) {
+        ESP_LOGE(TAG, "Payload size too large: %zu", payload_size);
+        return ESP_ERR_INVALID_SIZE;
+    }
+
+    ESP_LOGI(TAG, "Payload size before sending: %zu", payload_size);
+    ESP_LOG_BUFFER_HEX(TAG, payload, payload_size);
+
+    ESP_LOGI(TAG, "Sending node capabilities get message to 0x%04x", node->unicast);
+    ESP_LOGI(TAG, "Model: %p, Opcode: 0x%04lx", common.model, (unsigned long)common.opcode);
+    ESP_LOGI(TAG, "Context - NetIdx: 0x%04x, AppIdx: 0x%04x, Addr: 0x%04x, TTL: %d",
+             common.ctx.net_idx, common.ctx.app_idx, common.ctx.addr, common.ctx.send_ttl);
+
+    err = esp_ble_mesh_client_model_send_msg(&root_models[3], &common.ctx, OP_NODE_CAPABILITIES_GET, payload_size, payload, true, MSG_TIMEOUT, MSG_ROLE);
+    if (err != ESP_OK) {
+        ESP_LOGE(TAG, "Failed to send node capabilities get message (err %d)", err);
+        ESP_LOGE(TAG, "Model ID: 0x%04x, Opcode: 0x%04lx", root_models[3].model_id, (unsigned long)OP_NODE_CAPABILITIES_GET);
+        ESP_LOGE(TAG, "Common parameters - NetIdx: 0x%04x, AppIdx: 0x%04x, Addr: 0x%04x, TTL: %d",
+                 common.ctx.net_idx, common.ctx.app_idx, common.ctx.addr, common.ctx.send_ttl);
+        ESP_LOG_BUFFER_HEX(TAG, payload, payload_size);
+        return err;
+    }
+
+    ESP_LOGI(TAG, "Node capabilities get message sent to node 0x%04x", node->unicast);
+
+    ESP_LOGI(TAG, "Exiting send_node_capabilities_get");
+    return ESP_OK;
+}
+
+
+
+
+
+// Handle Custom Message Response
+static void handle_node_capabilities_status(custom_model_cb_param_t *param)
+{
+    ESP_LOGI(TAG, "Entering handle_node_capabilities_status");
+
+    if (param->opcode == OP_NODE_CAPABILITIES_STATUS) {
+        ESP_LOGI(TAG, "Handling node capabilities status");
+        ESP_LOG_BUFFER_HEX(TAG, param->data, param->length);
+        if (param->length <= sizeof(custom_status_t)) {
+            custom_status_t *status = (custom_status_t *)param->data;
+            if (status) {
+                esp_ble_mesh_node_info_t *node = example_ble_mesh_get_node_info(param->ctx->addr);
+                if (node) {
+                    node->memory = status->memory;
+                    node->processing_power = status->processing_power;
+                    ESP_LOGI(TAG, "Node capabilities - Memory: %" PRIu32 " KB, Processing Power: %" PRIu32 " MHz", status->memory, status->processing_power);
+                } else {
+                    ESP_LOGE(TAG, "Failed to get node info for address 0x%04x", param->ctx->addr);
+                }
+            } else {
+                ESP_LOGE(TAG, "Received status data is NULL");
+            }
+        } else {
+            ESP_LOGE(TAG, "Received payload size is too large: %d", param->length);
+        }
+    } else {
+        ESP_LOGE(TAG, "Unhandled opcode: 0x%08lx", (unsigned long)param->opcode);
+    }
+
+    ESP_LOGI(TAG, "Exiting handle_node_capabilities_status");
+}
+
+
+
+
+
+
 
 static esp_err_t prov_complete(int node_idx, const esp_ble_mesh_octet16_t uuid,
                                uint16_t unicast, uint8_t elem_num, uint16_t net_idx)
@@ -243,6 +370,8 @@ static esp_err_t prov_complete(int node_idx, const esp_ble_mesh_octet16_t uuid,
     char name[11] = {0};
     int err;
 
+    ESP_LOGI(TAG, "Entering prov_complete for node index: 0x%x", node_idx);
+
     ESP_LOGI(TAG, "node index: 0x%x, unicast address: 0x%02x, element num: %d, netkey index: 0x%02x",
              node_idx, unicast, elem_num, net_idx);
     ESP_LOGI(TAG, "device uuid: %s", bt_hex(uuid, 16));
@@ -250,32 +379,49 @@ static esp_err_t prov_complete(int node_idx, const esp_ble_mesh_octet16_t uuid,
     sprintf(name, "%s%d", "NODE-", node_idx);
     err = esp_ble_mesh_provisioner_set_node_name(node_idx, name);
     if (err) {
-        ESP_LOGE(TAG, "%s: Set node name failed", __func__);
+        ESP_LOGE(TAG, "Set node name failed");
         return ESP_FAIL;
     }
 
     err = example_ble_mesh_store_node_info(uuid, unicast, elem_num, LED_OFF);
     if (err) {
-        ESP_LOGE(TAG, "%s: Store node info failed", __func__);
+        ESP_LOGE(TAG, "Store node info failed");
         return ESP_FAIL;
     }
+    ESP_LOGI(TAG, "Node info stored successfully");
 
     node = example_ble_mesh_get_node_info(unicast);
     if (!node) {
-        ESP_LOGE(TAG, "%s: Get node info failed", __func__);
+        ESP_LOGE(TAG, "Get node info failed");
         return ESP_FAIL;
     }
+    ESP_LOGI(TAG, "Node info retrieved successfully");
 
-    example_ble_mesh_set_msg_common(&common, node, config_client.model, ESP_BLE_MESH_MODEL_OP_COMPOSITION_DATA_GET);
+    err = example_ble_mesh_set_msg_common(&common, node, config_client.model, ESP_BLE_MESH_MODEL_OP_COMPOSITION_DATA_GET);
+    if (err != ESP_OK) {
+        ESP_LOGE(TAG, "Failed to set common message parameters for composition data get");
+        return err;
+    }
+    
     get_state.comp_data_get.page = COMP_DATA_PAGE_0;
     err = esp_ble_mesh_config_client_get_state(&common, &get_state);
     if (err) {
-        ESP_LOGE(TAG, "%s: Send config comp data get failed", __func__);
+        ESP_LOGE(TAG, "Send config comp data get failed");
         return ESP_FAIL;
     }
+    ESP_LOGI(TAG, "Composition data get message sent");
 
+    err = send_node_capabilities_get(node);
+    if (err) {
+        ESP_LOGE(TAG, "Send node capabilities get failed");
+        return ESP_FAIL;
+    }
+    ESP_LOGI(TAG, "Node capabilities get message sent");
+
+    ESP_LOGI(TAG, "Exiting prov_complete");
     return ESP_OK;
 }
+
 
 static void prov_link_open(esp_ble_mesh_prov_bearer_t bearer)
 {
@@ -319,6 +465,44 @@ static void recv_unprov_adv_pkt(uint8_t dev_uuid[16], uint8_t addr[BD_ADDR_LEN],
 
     return;
 }
+
+
+
+
+// Custom model callback function
+static void example_ble_mesh_custom_model_cb(esp_ble_mesh_model_cb_event_t event,
+                                             esp_ble_mesh_model_cb_param_t *param)
+{
+    ESP_LOGI(TAG, "Custom model callback event: %d", event);
+
+    if (event == ESP_BLE_MESH_MODEL_OPERATION_EVT) {
+        ESP_LOGI(TAG, "Custom model operation event received, opcode: 0x%08lx, length: %d", 
+                 (unsigned long)param->model_operation.opcode, param->model_operation.length);
+
+        if (param->model_operation.opcode == OP_NODE_CAPABILITIES_STATUS) {
+            custom_model_cb_param_t custom_param = {0};
+            custom_param.model = param->model_operation.model;
+            custom_param.ctx = param->model_operation.ctx;
+            custom_param.opcode = param->model_operation.opcode;
+            custom_param.data = param->model_operation.msg;
+            custom_param.length = param->model_operation.length;
+
+            ESP_LOGI(TAG, "Node Capabilities Status received, opcode: 0x%08lx, length: %d", 
+                     (unsigned long)param->model_operation.opcode, param->model_operation.length);
+            ESP_LOG_BUFFER_HEX(TAG, param->model_operation.msg, param->model_operation.length);
+
+            handle_node_capabilities_status(&custom_param);
+        } else {
+            ESP_LOGE(TAG, "Unhandled custom model opcode: 0x%08lx", (unsigned long)param->model_operation.opcode);
+            ESP_LOG_BUFFER_HEX(TAG, param->model_operation.msg, param->model_operation.length);
+        }
+    } else {
+        ESP_LOGE(TAG, "Unhandled custom model event: %d", event);
+    }
+}
+
+
+
 
 static void example_ble_mesh_provisioning_cb(esp_ble_mesh_prov_cb_event_t event,
                                              esp_ble_mesh_prov_cb_param_t *param)
@@ -390,6 +574,7 @@ static void example_ble_mesh_provisioning_cb(esp_ble_mesh_prov_cb_event_t event,
     return;
 }
 
+
 static void example_ble_mesh_config_client_cb(esp_ble_mesh_cfg_client_cb_event_t event,
                                               esp_ble_mesh_cfg_client_cb_param_t *param)
 {
@@ -432,6 +617,7 @@ static void example_ble_mesh_config_client_cb(esp_ble_mesh_cfg_client_cb_event_t
                 ESP_LOGE(TAG, "%s: Config AppKey Add failed", __func__);
                 return;
             }
+
             break;
         }
         default:
@@ -634,6 +820,8 @@ static esp_err_t ble_mesh_init(void)
     uint8_t match[2] = {0xdd, 0xdd};
     esp_err_t err = ESP_OK;
 
+    ESP_LOGI(TAG, "Entering ble_mesh_init");
+
     prov_key.net_idx = ESP_BLE_MESH_KEY_PRIMARY;
     prov_key.app_idx = APP_KEY_IDX;
     memset(prov_key.app_key, APP_KEY_OCTET, sizeof(prov_key.app_key));
@@ -641,35 +829,48 @@ static esp_err_t ble_mesh_init(void)
     esp_ble_mesh_register_prov_callback(example_ble_mesh_provisioning_cb);
     esp_ble_mesh_register_config_client_callback(example_ble_mesh_config_client_cb);
     esp_ble_mesh_register_generic_client_callback(example_ble_mesh_generic_client_cb);
+    esp_ble_mesh_register_custom_model_callback(example_ble_mesh_custom_model_cb);
 
     err = esp_ble_mesh_init(&provision, &composition);
     if (err != ESP_OK) {
         ESP_LOGE(TAG, "Failed to initialize mesh stack (err %d)", err);
         return err;
     }
+    ESP_LOGI(TAG, "Mesh stack initialized successfully");
 
     err = esp_ble_mesh_provisioner_set_dev_uuid_match(match, sizeof(match), 0x0, false);
     if (err != ESP_OK) {
         ESP_LOGE(TAG, "Failed to set matching device uuid (err %d)", err);
         return err;
     }
+    ESP_LOGI(TAG, "Device UUID match set successfully");
 
     err = esp_ble_mesh_provisioner_prov_enable((esp_ble_mesh_prov_bearer_t)(ESP_BLE_MESH_PROV_ADV | ESP_BLE_MESH_PROV_GATT));
     if (err != ESP_OK) {
         ESP_LOGE(TAG, "Failed to enable mesh provisioner (err %d)", err);
         return err;
     }
+    ESP_LOGI(TAG, "Mesh provisioner enabled successfully");
 
     err = esp_ble_mesh_provisioner_add_local_app_key(prov_key.app_key, prov_key.net_idx, prov_key.app_idx);
     if (err != ESP_OK) {
         ESP_LOGE(TAG, "Failed to add local AppKey (err %d)", err);
         return err;
     }
+    ESP_LOGI(TAG, "Local AppKey added successfully");
+
+    err = esp_ble_mesh_provisioner_bind_app_key_to_local_model(PROV_OWN_ADDR, prov_key.app_idx, 0xFFFF, ESP_BLE_MESH_CID_NVAL);
+    if (err != ESP_OK) {
+        ESP_LOGE(TAG, "Failed to bind AppKey to custom model (err %d)", err);
+        return err;
+    }
+    ESP_LOGI(TAG, "AppKey bound to custom model successfully");
 
     ESP_LOGI(TAG, "BLE Mesh Provisioner initialized");
 
     return err;
 }
+
 
 void app_main(void)
 {

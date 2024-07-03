@@ -1,6 +1,6 @@
 /* Automatically generated file; DO NOT EDIT */
 /* Espressif IoT Development Framework Linker Script */
-/* Generated from: C:\Users\GXG\Research\on_device_learning\onoff_models\onoff_server\build\esp-idf\esp_system\ld\sections.ld.in */
+/* Generated from: D:\Projects\on_device_learning\projects\onoff_models\onoff_server\build\esp-idf\esp_system\ld\sections.ld.in */
 
 /*
 
