@@ -1,7 +1,7 @@
 {
     "version":            "1.1",
     "project_name":       "provisioner",
-    "project_version":    "edabdbb-dirty",
+    "project_version":    "d5791d0-dirty",
     "project_path":       "D:/Projects/on_device_learning/projects/provisioner3",
     "idf_path":           "D:/esp/esp-idf",
     "build_dir":          "D:/Projects/on_device_learning/projects/provisioner3/build",
