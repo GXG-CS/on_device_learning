@@ -474,33 +474,46 @@ static void example_ble_mesh_custom_model_cb(esp_ble_mesh_model_cb_event_t event
                                              esp_ble_mesh_model_cb_param_t *param)
 {
     ESP_LOGI(TAG, "Custom model callback event: %d", event);
+    ESP_LOGI(TAG, "Model: %p, Opcode: 0x%08lx, Length: %d",
+             param->model_operation.model,
+             (unsigned long)param->model_operation.opcode,
+             param->model_operation.length);
 
-    if (event == ESP_BLE_MESH_MODEL_OPERATION_EVT) {
-        ESP_LOGI(TAG, "Custom model operation event received, opcode: 0x%08lx, length: %d", 
-                 (unsigned long)param->model_operation.opcode, param->model_operation.length);
-
-        if (param->model_operation.opcode == OP_NODE_CAPABILITIES_STATUS) {
-            custom_model_cb_param_t custom_param = {0};
-            custom_param.model = param->model_operation.model;
-            custom_param.ctx = param->model_operation.ctx;
-            custom_param.opcode = param->model_operation.opcode;
-            custom_param.data = param->model_operation.msg;
-            custom_param.length = param->model_operation.length;
-
-            ESP_LOGI(TAG, "Node Capabilities Status received, opcode: 0x%08lx, length: %d", 
+    switch (event) {
+        case ESP_BLE_MESH_MODEL_OPERATION_EVT:
+            ESP_LOGI(TAG, "Custom model operation event received, opcode: 0x%08lx, length: %d", 
                      (unsigned long)param->model_operation.opcode, param->model_operation.length);
-            ESP_LOG_BUFFER_HEX(TAG, param->model_operation.msg, param->model_operation.length);
 
-            handle_node_capabilities_status(&custom_param);
-        } else {
-            ESP_LOGE(TAG, "Unhandled custom model opcode: 0x%08lx", (unsigned long)param->model_operation.opcode);
-            ESP_LOG_BUFFER_HEX(TAG, param->model_operation.msg, param->model_operation.length);
-        }
-    } else {
-        ESP_LOGE(TAG, "Unhandled custom model event: %d", event);
+            if (param->model_operation.opcode == OP_NODE_CAPABILITIES_STATUS) {
+                custom_model_cb_param_t custom_param = {0};
+                custom_param.model = param->model_operation.model;
+                custom_param.ctx = param->model_operation.ctx;
+                custom_param.opcode = param->model_operation.opcode;
+                custom_param.data = param->model_operation.msg;
+                custom_param.length = param->model_operation.length;
+
+                ESP_LOGI(TAG, "Node Capabilities Status received, opcode: 0x%08lx, length: %d", 
+                         (unsigned long)param->model_operation.opcode, param->model_operation.length);
+                ESP_LOG_BUFFER_HEX(TAG, param->model_operation.msg, param->model_operation.length);
+
+                handle_node_capabilities_status(&custom_param);
+            } else {
+                ESP_LOGE(TAG, "Unhandled custom model opcode: 0x%08lx", (unsigned long)param->model_operation.opcode);
+                ESP_LOG_BUFFER_HEX(TAG, param->model_operation.msg, param->model_operation.length);
+            }
+            break;
+
+        case 1:
+            // Handle event code 1
+            ESP_LOGI(TAG, "Handling custom event 1");
+            // Add handling code here if necessary
+            break;
+
+        default:
+            ESP_LOGE(TAG, "Unhandled custom model event: %d", event);
+            break;
     }
 }
-
 
 
 
