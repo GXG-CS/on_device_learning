@@ -1,0 +1,23 @@
+0000000000000000000000000000000000000000 a21ffed113d86901ddb50f8d11d96848fb961975 GXG <xiaoguang_guo@mines.edu> 1715031475 -0600	clone: from https://github.com/GXG-CS/on_device_learning.git
+a21ffed113d86901ddb50f8d11d96848fb961975 b24232c87149d11d00cb42d65ae453245de0b23c GXG <xiaoguang_guo@mines.edu> 1715032683 -0600	commit: papers
+b24232c87149d11d00cb42d65ae453245de0b23c b5584a6ea922e26ed0a32d7361081570de578342 GXG <xiaoguang_guo@mines.edu> 1715033410 -0600	commit: data redundancy survey
+b5584a6ea922e26ed0a32d7361081570de578342 41dc0d294caa654e69e5c056bdf2e6c86a7e1fc2 GXG <xiaoguang_guo@mines.edu> 1715106192 -0600	pull: Fast-forward
+41dc0d294caa654e69e5c056bdf2e6c86a7e1fc2 89e50846dac6be2f7dc137e3924e26535310d01f GXG <xiaoguang_guo@mines.edu> 1715117452 -0600	commit: cps
+89e50846dac6be2f7dc137e3924e26535310d01f b5797f1d5da01904c47b27b5dda9183949ed7985 GXG <xiaoguang_guo@mines.edu> 1715288427 -0600	pull: Fast-forward
+b5797f1d5da01904c47b27b5dda9183949ed7985 73514c650db60cf06bb6535013b9ae075d8a0d7f GXG <xiaoguang_guo@mines.edu> 1715619704 -0600	pull: Fast-forward
+73514c650db60cf06bb6535013b9ae075d8a0d7f 53ec2acac05cea4684c2b0c4d311713dbf7ea177 GXG <xiaoguang_guo@mines.edu> 1715645903 -0600	commit: MCUs network architecture
+53ec2acac05cea4684c2b0c4d311713dbf7ea177 da2bb77b34eecaa40ccb8694160ab7d08710cfc3 GXG <xiaoguang_guo@mines.edu> 1715786224 -0600	pull: Fast-forward
+da2bb77b34eecaa40ccb8694160ab7d08710cfc3 b2b8447bc1beb32cd4304ac90fd7223ad871cece GXG <xiaoguang_guo@mines.edu> 1715786255 -0600	commit: BLE AND WIFI
+b2b8447bc1beb32cd4304ac90fd7223ad871cece 3c5a04ed891040c8b3d5d0bc1e826f1829df5bda GXG <xiaoguang_guo@mines.edu> 1715797336 -0600	commit: blockchain
+3c5a04ed891040c8b3d5d0bc1e826f1829df5bda 5b4cade1cc1823ae15ac93a028a3fcaae5ba480d GXG <xiaoguang_guo@mines.edu> 1716335244 -0600	commit: ble .ino
+5b4cade1cc1823ae15ac93a028a3fcaae5ba480d 2ccc8f1535c99feb243c72decdf3961e8f9191cc GXG <xiaoguang_guo@mines.edu> 1716912482 -0600	pull: Fast-forward
+2ccc8f1535c99feb243c72decdf3961e8f9191cc e45273ec9a996577f98c2d031896bb05154d1d66 GXG <xiaoguang_guo@mines.edu> 1716930037 -0600	commit: link activation
+e45273ec9a996577f98c2d031896bb05154d1d66 2afd98c7e71b572f25018bb9de106189ece0f459 GXG <xiaoguang_guo@mines.edu> 1717948089 -0600	pull: Fast-forward
+2afd98c7e71b572f25018bb9de106189ece0f459 1ac70e237c98bae3b80cfc5d230c54888015acdd GXG <xiaoguang_guo@mines.edu> 1717972723 -0600	commit: ad hoc wireless mesh network
+1ac70e237c98bae3b80cfc5d230c54888015acdd c735b22f74e46b5a6fa54ebd33eeb9150d977cc7 GXG <xiaoguang_guo@mines.edu> 1718821458 -0600	pull: Fast-forward
+c735b22f74e46b5a6fa54ebd33eeb9150d977cc7 edabdbba2c165e3dad07b9ff1570de3b6b1dd4c4 GXG <xiaoguang_guo@mines.edu> 1719850306 -0600	pull: Fast-forward
+edabdbba2c165e3dad07b9ff1570de3b6b1dd4c4 d5791d061124d6d79fcb40d32177e3fc82ba7c2e GXG <xiaoguang_guo@mines.edu> 1720044139 -0600	commit: custom model
+d5791d061124d6d79fcb40d32177e3fc82ba7c2e db258f448d98d819f3d3ec9bad38bdf8225dafb4 GXG <xiaoguang_guo@mines.edu> 1720108754 -0600	commit: client node custom model
+db258f448d98d819f3d3ec9bad38bdf8225dafb4 5a0d86d6b3c6381f2855d27c8dbb9778ba876c4d GXG <xiaoguang_guo@mines.edu> 1720457961 -0600	pull: Fast-forward
+5a0d86d6b3c6381f2855d27c8dbb9778ba876c4d 6a3bcd6beb929013149bb1cfdbcda436f81092f8 GXG <xiaoguang_guo@mines.edu> 1720483011 -0600	commit: custom_model.h and custom_model.c
+6a3bcd6beb929013149bb1cfdbcda436f81092f8 13a03f43436108b23da6efa474583c237aebe437 GXG <xiaoguang_guo@mines.edu> 1720647643 -0600	commit: vendor_model
