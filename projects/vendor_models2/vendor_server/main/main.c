@@ -261,6 +261,9 @@ static void example_ble_mesh_custom_model_cb(esp_ble_mesh_model_cb_event_t event
                 }
 
                 // Send acknowledgment back to the client
+                ESP_LOGI(TAG, "Preparing to send acknowledgment to client...");
+
+                // Send acknowledgment back to the client
                 esp_ble_mesh_msg_ctx_t ctx = {
                     .net_idx = param->model_operation.ctx->net_idx,
                     .app_idx = param->model_operation.ctx->app_idx,
@@ -271,6 +274,9 @@ static void example_ble_mesh_custom_model_cb(esp_ble_mesh_model_cb_event_t event
                     .recv_ttl = param->model_operation.ctx->recv_ttl,
                 };
                 uint32_t ack_opcode = ESP_BLE_MESH_VND_MODEL_OP_ACK;
+                ESP_LOGI(TAG, "Sending acknowledgment to client with opcode 0x%06" PRIx32, ack_opcode);
+
+
                 esp_err_t err = esp_ble_mesh_server_model_send_msg(param->model_operation.model, &ctx, ack_opcode,
                         sizeof(transformed_data), (uint8_t *)transformed_data);
                 if (err != ESP_OK) {
@@ -280,6 +286,7 @@ static void example_ble_mesh_custom_model_cb(esp_ble_mesh_model_cb_event_t event
                     for (int i = 0; i < INPUT_SIZE; i++) {
                         ESP_LOGI(TAG, "Output[%d]: %f", i, transformed_data[i]);
                     }
+                    ESP_LOGI(TAG, "Message sent successfully, waiting for client to process...");
                 }
 
             } else {
