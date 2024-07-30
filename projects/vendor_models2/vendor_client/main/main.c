@@ -33,7 +33,7 @@
 #define PROV_OWN_ADDR       0x0001
 
 #define MSG_SEND_TTL        3
-#define MSG_TIMEOUT         0
+#define MSG_TIMEOUT         20000
 #define MSG_ROLE            ROLE_PROVISIONER
 
 #define COMP_DATA_PAGE_0    0x00
@@ -517,15 +517,15 @@ static void example_ble_mesh_config_client_cb(esp_ble_mesh_cfg_client_cb_event_t
 
 
 
-static bool message_sent = false; // Ensure the message is sent only once until acknowledgment
+// static bool message_sent = false; // Ensure the message is sent only once until acknowledgment
 
 
 void example_ble_mesh_send_vendor_message(bool resend)
 {
-    if (message_sent && !resend) {
-        ESP_LOGI(TAG, "Message already sent, waiting for acknowledgment");
-        return;
-    }
+    // if (message_sent && !resend) {
+    //     ESP_LOGI(TAG, "Message already sent, waiting for acknowledgment");
+    //     return;
+    // }
 
     esp_ble_mesh_msg_ctx_t ctx = {0};
     uint32_t opcode;
@@ -575,9 +575,57 @@ void example_ble_mesh_send_vendor_message(bool resend)
         return;
     }
 
-    message_sent = true; // Mark message as sent
+    // message_sent = true; // Mark message as sent
     mesh_example_info_store(); /* Store proper mesh example info */
 }
+
+
+
+// static void example_ble_mesh_custom_model_cb(esp_ble_mesh_model_cb_event_t event,
+//                                              esp_ble_mesh_model_cb_param_t *param)
+// {
+//     static int64_t start_time;
+
+//     switch (event) {
+//     case ESP_BLE_MESH_MODEL_OPERATION_EVT:
+//         if (param->model_operation.opcode == ESP_BLE_MESH_VND_MODEL_OP_ACK) {
+//             ESP_LOGI(TAG, "Acknowledgment received from server");
+
+//             // Reset the message_sent flag
+//             message_sent = false;
+//         }
+        
+//         if (param->model_operation.opcode == ESP_BLE_MESH_VND_MODEL_OP_STATUS) {
+//             int64_t end_time = esp_timer_get_time();
+//             ESP_LOGI(TAG, "Recv 0x06%" PRIx32 ", tid 0x%04x, time %lldus",
+//                 param->model_operation.opcode, store.vnd_tid, end_time - start_time);
+            
+//             // Print the store_node information here
+//             ESP_LOGI(TAG, "----------------------Stored Node Information:------------------");
+//             ESP_LOGI(TAG, "Server Address: 0x%04x", store.server_addr);
+//         }
+//         break;
+
+
+//     case ESP_BLE_MESH_MODEL_SEND_COMP_EVT:
+//         if (param->model_send_comp.err_code) {
+//             ESP_LOGE(TAG, "Failed to send message 0x%06" PRIx32, param->model_send_comp.opcode);
+//             break;
+//         }
+//         start_time = esp_timer_get_time();
+//         ESP_LOGI(TAG, "Send 0x%06" PRIx32, param->model_send_comp.opcode);
+//         break;
+//     case ESP_BLE_MESH_CLIENT_MODEL_RECV_PUBLISH_MSG_EVT:
+//         ESP_LOGI(TAG, "Receive publish message 0x%06" PRIx32, param->client_recv_publish_msg.opcode);
+//         break;
+//     case ESP_BLE_MESH_CLIENT_MODEL_SEND_TIMEOUT_EVT:
+//         ESP_LOGW(TAG, "Client message 0x%06" PRIx32 " timeout", param->client_send_timeout.opcode);
+//         // example_ble_mesh_send_vendor_message(true);
+//         break;
+//     default:
+//         break;
+//     }
+// }
 
 
 
@@ -589,22 +637,37 @@ static void example_ble_mesh_custom_model_cb(esp_ble_mesh_model_cb_event_t event
     switch (event) {
     case ESP_BLE_MESH_MODEL_OPERATION_EVT:
         if (param->model_operation.opcode == ESP_BLE_MESH_VND_MODEL_OP_ACK) {
+            ESP_LOGI(TAG, "Processing acknowledgment message...");
+            ESP_LOGI(TAG, "Acknowledgment message details: opcode=0x%06" PRIx32 ", length=%d", param->model_operation.opcode, param->model_operation.length);
+
+            // Check the received message details
+            ESP_LOGI(TAG, "Message context: net_idx=%d, app_idx=%d, addr=0x%04x, recv_dst=0x%04x",
+                     param->model_operation.ctx->net_idx, param->model_operation.ctx->app_idx,
+                     param->model_operation.ctx->addr, param->model_operation.ctx->recv_dst);
+
             ESP_LOGI(TAG, "Acknowledgment received from server");
 
-            // Reset the message_sent flag
-            message_sent = false;
-        }
-        
-        if (param->model_operation.opcode == ESP_BLE_MESH_VND_MODEL_OP_STATUS) {
-            int64_t end_time = esp_timer_get_time();
-            ESP_LOGI(TAG, "Recv 0x06%" PRIx32 ", tid 0x%04x, time %lldus",
-                param->model_operation.opcode, store.vnd_tid, end_time - start_time);
-            
-            // Print the store_node information here
-            ESP_LOGI(TAG, "----------------------Stored Node Information:------------------");
-            ESP_LOGI(TAG, "Server Address: 0x%04x", store.server_addr);
+            // Process the received data from the server
+            if (param->model_operation.length == OUTPUT_SIZE * sizeof(float)) {
+                float received_data[OUTPUT_SIZE];
+                memcpy(received_data, param->model_operation.msg, param->model_operation.length);
+
+                ESP_LOGI(TAG, "Received data from server:");
+                for (int i = 0; i < OUTPUT_SIZE; i++) {
+                    ESP_LOGI(TAG, "Output[%d]: %f", i, received_data[i]);
+                }
+                ESP_LOGI(TAG, "Client processed the received data successfully.");
+            } else {
+                ESP_LOGE(TAG, "Unexpected message length: %d", param->model_operation.length);
+            }
+
+            // Reset the message_sent flag to allow new messages to be sent
+            // message_sent = false;
+        } else {
+            ESP_LOGI(TAG, "Received unexpected message with opcode 0x%06" PRIx32, param->model_operation.opcode);
         }
         break;
+        
     case ESP_BLE_MESH_MODEL_SEND_COMP_EVT:
         if (param->model_send_comp.err_code) {
             ESP_LOGE(TAG, "Failed to send message 0x%06" PRIx32, param->model_send_comp.opcode);
@@ -613,17 +676,25 @@ static void example_ble_mesh_custom_model_cb(esp_ble_mesh_model_cb_event_t event
         start_time = esp_timer_get_time();
         ESP_LOGI(TAG, "Send 0x%06" PRIx32, param->model_send_comp.opcode);
         break;
+        
     case ESP_BLE_MESH_CLIENT_MODEL_RECV_PUBLISH_MSG_EVT:
         ESP_LOGI(TAG, "Receive publish message 0x%06" PRIx32, param->client_recv_publish_msg.opcode);
         break;
+        
     case ESP_BLE_MESH_CLIENT_MODEL_SEND_TIMEOUT_EVT:
         ESP_LOGW(TAG, "Client message 0x%06" PRIx32 " timeout", param->client_send_timeout.opcode);
+        // Uncomment the below line to retry sending the message
         // example_ble_mesh_send_vendor_message(true);
         break;
+        
     default:
+        ESP_LOGE(TAG, "Invalid custom model event %u", event);
         break;
     }
 }
+
+
+
 
 static esp_err_t ble_mesh_init(void)
 {
