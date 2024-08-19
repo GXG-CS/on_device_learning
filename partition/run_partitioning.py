@@ -80,3 +80,46 @@ results.append(run_algorithm("Hill Climbing", hill_climbing, num_layers, num_dev
 results.append(run_algorithm("Random Search", random_search, num_layers, num_devices, T, C, num_trials=1000))
 # results.append(run_algorithm("MILP", milp_partitioning, num_layers, num_devices, T, C))
 results.append(run_algorithm("Tabu Search", tabu_search, num_layers, num_devices, T, C, max_iterations=1000, tabu_tenure=10))
+
+
+
+
+
+
+
+import csv
+
+# Define the CSV file path
+output_csv = "algorithm_results_summary.csv"
+
+# List of algorithm names corresponding to the order of results
+algorithm_names = [
+    "Greedy Algorithm",
+    "Simulated Annealing",
+    "Genetic Algorithm",
+    "Grid Search",
+    "Particle Swarm Optimization (PSO)",
+    "Ant Colony Optimization (ACO)",
+    "Branch and Bound",
+    "Hill Climbing",
+    "Random Search",
+    "Tabu Search"
+]
+
+# Define the header for the CSV file
+header = ["Algorithm", "Best Total Time (Transfer + Computation)", "Elapsed Time (seconds)", "Peak Memory Used (KB)"]
+
+# Write the results to the CSV file
+with open(output_csv, mode='w', newline='') as file:
+    writer = csv.writer(file)
+    
+    # Write the header
+    writer.writerow(header)
+    
+    # Write each algorithm's results
+    for algorithm_name, result in zip(algorithm_names, results):
+        best_cost, elapsed_time, peak_memory_used = result[1], result[2], result[3]
+        writer.writerow([algorithm_name, best_cost, elapsed_time, peak_memory_used])
+
+print(f"Results have been written to {output_csv}")
+
