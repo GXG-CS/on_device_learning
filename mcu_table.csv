@@ -1,0 +1,31 @@
+MCU Model,CPU (Core),Frequency (MHz),Flash (KB),RAM (KB),BLE Support,Source
+STM32WB55RG,ARM Cortex-M4 (Single),64,1024,256,BLE 5.0,https://www.st.com/en/microcontrollers-microprocessors/stm32wb55rg.html
+STM32WB5MMG,ARM Cortex-M4 (Single),64,1024,256,BLE 5.0,https://www.st.com/en/microcontrollers-microprocessors/stm32wb5mmg.html
+STM32L4+,ARM Cortex-M4 (Single),120,2048,640,BLE 5.0,https://www.st.com/en/microcontrollers-microprocessors/stm32l4-plus-series.html
+STM32L152RE,ARM Cortex-M3 (Single),32,512,80,BLE 4.2,https://www.st.com/en/microcontrollers-microprocessors/stm32l152re.html
+STM32WB1M,ARM Cortex-M4 (Single),48,512,192,BLE 5.0,https://www.st.com/en/microcontrollers-microprocessors/stm32wb1mmg.html
+STM32WB50CG,ARM Cortex-M4 (Single),64,512,256,BLE 5.0,https://www.st.com/en/microcontrollers-microprocessors/stm32wb50cg.html
+STM32WB15CC,ARM Cortex-M4 (Single),64,512,192,BLE 5.0,https://www.st.com/en/microcontrollers-microprocessors/stm32wb15cc.html
+STM32WB35CC,ARM Cortex-M4 (Single),64,512,256,BLE 5.0,https://www.st.com/en/microcontrollers-microprocessors/stm32wb35cc.html
+STM32L562QE,ARM Cortex-M33 (Single),110,512,256,BLE 5.0,https://www.st.com/en/microcontrollers-microprocessors/stm32l562qe.html
+STM32WB10CC,ARM Cortex-M4 (Single),64,256,128,BLE 5.0,https://www.st.com/en/microcontrollers-microprocessors/stm32wb10cc.html
+ESP32,Tensilica Xtensa LX6 (Dual),240,448,520,BLE 4.2,https://www.espressif.com/en/products/socs/esp32
+ESP32-S2,Tensilica Xtensa LX7 (Single),240,1280,320,BLE 5.0,https://www.espressif.com/en/products/socs/esp32-s2
+ESP32-C3,RISC-V (Single),160,384,400,BLE 5.0,https://www.espressif.com/en/products/socs/esp32-c3
+ESP32-S3,Tensilica Xtensa LX7 (Dual),240,512,384,BLE 5.0,https://www.espressif.com/en/products/socs/esp32-s3
+ESP32-PICO-D4,Tensilica Xtensa LX6 (Dual),240,448,520,BLE 4.2,https://www.espressif.com/en/products/socs/esp32-pico-d4
+ESP32-WROOM-32,Tensilica Xtensa LX6 (Dual),240,448,520,BLE 4.2,https://www.espressif.com/en/products/modules/esp32
+ESP32-WROVER,Tensilica Xtensa LX6 (Dual),240,448,520,BLE 4.2,https://www.espressif.com/en/products/modules/esp32
+ESP32-D0WD,Tensilica Xtensa LX6 (Dual),240,448,520,BLE 4.2,https://www.espressif.com/en/products/socs/esp32
+ESP32-D0WDQ6,Tensilica Xtensa LX6 (Dual),240,448,520,BLE 4.2,https://www.espressif.com/en/products/socs/esp32
+ESP32-S3-WROOM,Tensilica Xtensa LX7 (Dual),240,512,384,BLE 5.0,https://www.espressif.com/en/products/socs/esp32-s3
+nRF52840,ARM Cortex-M4 (Single),64,1024,256,BLE 5.0,https://www.nordicsemi.com/Products/Low-power-short-range-wireless/nRF52840
+nRF52832,ARM Cortex-M4 (Single),64,512,64,BLE 5.0,https://www.nordicsemi.com/Products/Low-power-short-range-wireless/nRF52832
+nRF52811,ARM Cortex-M4 (Single),64,192,24,BLE 5.1,https://www.nordicsemi.com/Products/Low-power-short-range-wireless/nRF52811
+nRF52810,ARM Cortex-M4 (Single),64,192,24,BLE 5.0,https://www.nordicsemi.com/Products/Low-power-short-range-wireless/nRF52810
+nRF5340,ARM Cortex-M33 (Dual),128,1024,512,BLE 5.2,https://www.nordicsemi.com/Products/Low-power-short-range-wireless/nRF5340
+CC2640R2F,ARM Cortex-M3 (Single),48,128,28,BLE 5.0,https://www.ti.com/product/CC2640R2F
+CC2652R,ARM Cortex-M4 (Single),48,352,80,BLE 5.0,https://www.ti.com/product/CC2652R
+CC1352P,ARM Cortex-M4 (Single),48,512,80,BLE 5.0,https://www.ti.com/product/CC1352P
+EFR32BG22,ARM Cortex-M33 (Single),76.8,512,32,BLE 5.2,https://www.silabs.com/wireless/bluetooth/efr32bg22-series-2-socs
+CYW20719,ARM Cortex-M4 (Single),96,1024,96,BLE 5.0,https://community.cypress.com/docs/DOC-20801
