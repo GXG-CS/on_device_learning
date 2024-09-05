@@ -1,7 +1,7 @@
 # Define the input and output file names
-input_file = 'mobilenetv2_single_layer.tflite'
+input_file = 'simple_single_layer_model.tflite'
 output_file = 'model_data.cc'
-array_name = 'mobilenetv2_single_layer_model'
+array_name = 'simple_single_layer_model_data'
 
 # Read the binary content of the .tflite model
 with open(input_file, 'rb') as f:
