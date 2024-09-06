@@ -6,6 +6,8 @@
     "idf.portWin": "COM7",
     "cmake.sourceDirectory": "D:/Projects/on_device_learning/test",
     "files.associations": {
-        "custom_model.h": "c"
+        "custom_model.h": "c",
+        "ble_mesh_fast_prov.h": "c",
+        "esp_ble_mesh_fast_prov.h": "c"
     }
 }
