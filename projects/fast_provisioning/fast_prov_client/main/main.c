@@ -15,6 +15,7 @@
 
 #include "ble_mesh_fast_prov.h"
 #include "node_info.h"
+// #include "ble_comm_service.h"
 
 
 
@@ -45,6 +46,20 @@ void app_main(void)
         ESP_LOGE(TAG, "Failed to initialize BLE Mesh (err %d)", err);
     }
 
+    // // Initialize BLE Communication for node info transfer
+    // err = ble_comm_service_init();
+    // if (err) {
+    //     ESP_LOGE(TAG, "Failed to initialize BLE communication (err %d)", err);
+    //     return;
+    // }
+
     // node info
     print_node_info();
+
+    // // Periodically send node info
+    // while (1) {
+    //     ble_comm_service_send_node_info();
+    //     vTaskDelay(5000 / portTICK_PERIOD_MS);
+    // }
+
 }
