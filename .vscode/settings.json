@@ -8,6 +8,7 @@
     "files.associations": {
         "custom_model.h": "c",
         "ble_mesh_fast_prov.h": "c",
-        "esp_ble_mesh_fast_prov.h": "c"
+        "esp_ble_mesh_fast_prov.h": "c",
+        "node_info.h": "c"
     }
 }
