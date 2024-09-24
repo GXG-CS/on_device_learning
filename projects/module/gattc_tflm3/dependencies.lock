@@ -1,0 +1,22 @@
+dependencies:
+  espressif/esp-nn:
+    component_hash: b32869798bdb40dec6bc99caca48cd65d42f8a9f506b9ab9c598a076f891ede9
+    source:
+      pre_release: true
+      service_url: https://api.components.espressif.com/
+      type: service
+    version: 1.0.2
+  espressif/esp-tflite-micro:
+    component_hash: null
+    source:
+      path: D:\esp\esp-tflite-micro
+      type: local
+    version: '*'
+  idf:
+    component_hash: null
+    source:
+      type: idf
+    version: 5.2.2
+manifest_hash: bdb8fb8b40dfc77cc94211ea2e0f69660e6dc34003e688feab196fd9748535cc
+target: esp32
+version: 1.0.0
