@@ -1,0 +1,18 @@
+[
+    {"name": "Conv1", "type": "Conv", "input_shape": [224, 224, 3], "filter_size": [11, 11], "filters": 96, "stride": 4, "padding": 0},
+    {"name": "MaxPool1", "type": "MaxPool", "input_shape": [55, 55, 96], "filter_size": [3, 3], "stride": 2, "padding": 0},
+    {"name": "Conv2", "type": "Conv", "input_shape": [27, 27, 96], "filter_size": [5, 5], "filters": 256, "stride": 1, "padding": 2},
+    {"name": "MaxPool2", "type": "MaxPool", "input_shape": [27, 27, 256], "filter_size": [3, 3], "stride": 2, "padding": 0},
+    {"name": "Conv3", "type": "Conv", "input_shape": [13, 13, 256], "filter_size": [3, 3], "filters": 384, "stride": 1, "padding": 1},
+    {"name": "Conv4", "type": "Conv", "input_shape": [13, 13, 384], "filter_size": [3, 3], "filters": 384, "stride": 1, "padding": 1},
+    {"name": "Conv5", "type": "Conv", "input_shape": [13, 13, 384], "filter_size": [3, 3], "filters": 256, "stride": 1, "padding": 1},
+    {"name": "MaxPool3", "type": "MaxPool", "input_shape": [13, 13, 256], "filter_size": [3, 3], "stride": 2, "padding": 0},
+    {"name": "Flatten", "type": "Flatten", "input_shape": [6, 6, 256]},
+    {"name": "FC1", "type": "FC", "input_shape": [9216], "units": 4096},
+    {"name": "Dropout1", "type": "Dropout", "input_shape": [4096]},
+    {"name": "FC2", "type": "FC", "input_shape": [4096], "units": 4096},
+    {"name": "Dropout2", "type": "Dropout", "input_shape": [4096]},
+    {"name": "FC3", "type": "FC", "input_shape": [4096], "units": 1000}
+]
+
+
