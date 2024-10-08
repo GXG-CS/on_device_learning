@@ -1,0 +1,62 @@
+[
+    {"name": "Conv1", "type": "Conv", "input_shape": [224, 224, 3], "filter_size": [7, 7], "filters": 64, "stride": 2, "padding": 3},
+    {"name": "MaxPool1", "type": "MaxPool", "input_shape": [112, 112, 64], "filter_size": [3, 3], "stride": 2, "padding": 0},
+
+    {"name": "ResidualBlock1_1", "type": "ResidualBlock", "input_shape": [56, 56, 64], 
+     "layers": [
+        {"name": "Conv2_1", "type": "Conv", "filter_size": [3, 3], "filters": 64, "stride": 1, "padding": 1},
+        {"name": "Conv2_2", "type": "Conv", "filter_size": [3, 3], "filters": 64, "stride": 1, "padding": 1}
+     ]
+    },
+    {"name": "ResidualBlock1_2", "type": "ResidualBlock", "input_shape": [56, 56, 64], 
+     "layers": [
+        {"name": "Conv2_3", "type": "Conv", "filter_size": [3, 3], "filters": 64, "stride": 1, "padding": 1},
+        {"name": "Conv2_4", "type": "Conv", "filter_size": [3, 3], "filters": 64, "stride": 1, "padding": 1}
+     ]
+    },
+
+    {"name": "ResidualBlock2_1", "type": "ResidualBlock", "input_shape": [56, 56, 64], 
+     "layers": [
+        {"name": "Conv3_1", "type": "Conv", "filter_size": [3, 3], "filters": 128, "stride": 2, "padding": 1},
+        {"name": "Conv3_2", "type": "Conv", "filter_size": [3, 3], "filters": 128, "stride": 1, "padding": 1}
+     ],
+     "shortcut": {"type": "Conv", "filter_size": [1, 1], "filters": 128, "stride": 2, "padding": 0}
+    },
+    {"name": "ResidualBlock2_2", "type": "ResidualBlock", "input_shape": [28, 28, 128], 
+     "layers": [
+        {"name": "Conv3_3", "type": "Conv", "filter_size": [3, 3], "filters": 128, "stride": 1, "padding": 1},
+        {"name": "Conv3_4", "type": "Conv", "filter_size": [3, 3], "filters": 128, "stride": 1, "padding": 1}
+     ]
+    },
+
+    {"name": "ResidualBlock3_1", "type": "ResidualBlock", "input_shape": [28, 28, 128], 
+     "layers": [
+        {"name": "Conv4_1", "type": "Conv", "filter_size": [3, 3], "filters": 256, "stride": 2, "padding": 1},
+        {"name": "Conv4_2", "type": "Conv", "filter_size": [3, 3], "filters": 256, "stride": 1, "padding": 1}
+     ],
+     "shortcut": {"type": "Conv", "filter_size": [1, 1], "filters": 256, "stride": 2, "padding": 0}
+    },
+    {"name": "ResidualBlock3_2", "type": "ResidualBlock", "input_shape": [14, 14, 256], 
+     "layers": [
+        {"name": "Conv4_3", "type": "Conv", "filter_size": [3, 3], "filters": 256, "stride": 1, "padding": 1},
+        {"name": "Conv4_4", "type": "Conv", "filter_size": [3, 3], "filters": 256, "stride": 1, "padding": 1}
+     ]
+    },
+
+    {"name": "ResidualBlock4_1", "type": "ResidualBlock", "input_shape": [14, 14, 256], 
+     "layers": [
+        {"name": "Conv5_1", "type": "Conv", "filter_size": [3, 3], "filters": 512, "stride": 2, "padding": 1},
+        {"name": "Conv5_2", "type": "Conv", "filter_size": [3, 3], "filters": 512, "stride": 1, "padding": 1}
+     ],
+     "shortcut": {"type": "Conv", "filter_size": [1, 1], "filters": 512, "stride": 2, "padding": 0}
+    },
+    {"name": "ResidualBlock4_2", "type": "ResidualBlock", "input_shape": [7, 7, 512], 
+     "layers": [
+        {"name": "Conv5_3", "type": "Conv", "filter_size": [3, 3], "filters": 512, "stride": 1, "padding": 1},
+        {"name": "Conv5_4", "type": "Conv", "filter_size": [3, 3], "filters": 512, "stride": 1, "padding": 1}
+     ]
+    },
+
+    {"name": "GlobalAvgPool", "type": "GlobalAvgPool", "input_shape": [7, 7, 512]},
+    {"name": "FC", "type": "FullyConnected", "input_shape": [1, 1, 512], "units": 1000}
+]

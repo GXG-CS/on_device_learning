@@ -1,0 +1,27 @@
+[
+    {"name": "Conv1a", "type": "Conv3D", "input_shape": [16, 112, 112, 3], "filter_size": [3, 3, 3], "filters": 64, "stride": [1, 1, 1], "padding": 1},
+    {"name": "MaxPool1", "type": "MaxPool3D", "input_shape": [16, 112, 112, 64], "filter_size": [1, 2, 2], "stride": [1, 2, 2], "padding": 0},
+
+    {"name": "Conv2a", "type": "Conv3D", "input_shape": [16, 56, 56, 64], "filter_size": [3, 3, 3], "filters": 128, "stride": [1, 1, 1], "padding": 1},
+    {"name": "MaxPool2", "type": "MaxPool3D", "input_shape": [16, 56, 56, 128], "filter_size": [2, 2, 2], "stride": [2, 2, 2], "padding": 0},
+
+    {"name": "Conv3a", "type": "Conv3D", "input_shape": [8, 28, 28, 128], "filter_size": [3, 3, 3], "filters": 256, "stride": [1, 1, 1], "padding": 1},
+    {"name": "Conv3b", "type": "Conv3D", "input_shape": [8, 28, 28, 256], "filter_size": [3, 3, 3], "filters": 256, "stride": [1, 1, 1], "padding": 1},
+    {"name": "MaxPool3", "type": "MaxPool3D", "input_shape": [8, 28, 28, 256], "filter_size": [2, 2, 2], "stride": [2, 2, 2], "padding": 0},
+
+    {"name": "Conv4a", "type": "Conv3D", "input_shape": [4, 14, 14, 256], "filter_size": [3, 3, 3], "filters": 512, "stride": [1, 1, 1], "padding": 1},
+    {"name": "Conv4b", "type": "Conv3D", "input_shape": [4, 14, 14, 512], "filter_size": [3, 3, 3], "filters": 512, "stride": [1, 1, 1], "padding": 1},
+    {"name": "MaxPool4", "type": "MaxPool3D", "input_shape": [4, 14, 14, 512], "filter_size": [2, 2, 2], "stride": [2, 2, 2], "padding": 0},
+
+    {"name": "Conv5a", "type": "Conv3D", "input_shape": [2, 7, 7, 512], "filter_size": [3, 3, 3], "filters": 512, "stride": [1, 1, 1], "padding": 1},
+    {"name": "Conv5b", "type": "Conv3D", "input_shape": [2, 7, 7, 512], "filter_size": [3, 3, 3], "filters": 512, "stride": [1, 1, 1], "padding": 1},
+    {"name": "MaxPool5", "type": "MaxPool3D", "input_shape": [2, 7, 7, 512], "filter_size": [2, 2, 2], "stride": [2, 2, 2], "padding": 0},
+
+    {"name": "Flatten", "type": "Flatten", "input_shape": [1, 4, 4, 512]},
+    {"name": "FC6", "type": "FC", "input_shape": [8192], "units": 4096},
+    {"name": "Dropout1", "type": "Dropout", "input_shape": [4096]},
+    {"name": "FC7", "type": "FC", "input_shape": [4096], "units": 4096},
+    {"name": "Dropout2", "type": "Dropout", "input_shape": [4096]},
+    {"name": "Softmax", "type": "Softmax", "input_shape": [4096], "units": 487} 
+]
+
