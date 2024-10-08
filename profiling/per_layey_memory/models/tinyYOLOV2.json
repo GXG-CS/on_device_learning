@@ -1,0 +1,24 @@
+[
+    {"name": "Conv1", "type": "Conv", "input_shape": [416, 416, 3], "filter_size": [3, 3], "filters": 16, "stride": 1, "padding": 1},
+    {"name": "MaxPool1", "type": "MaxPool", "input_shape": [416, 416, 16], "filter_size": [2, 2], "stride": 2, "padding": 0},
+    
+    {"name": "Conv2", "type": "Conv", "input_shape": [208, 208, 16], "filter_size": [3, 3], "filters": 32, "stride": 1, "padding": 1},
+    {"name": "MaxPool2", "type": "MaxPool", "input_shape": [208, 208, 32], "filter_size": [2, 2], "stride": 2, "padding": 0},
+    
+    {"name": "Conv3", "type": "Conv", "input_shape": [104, 104, 32], "filter_size": [3, 3], "filters": 64, "stride": 1, "padding": 1},
+    {"name": "MaxPool3", "type": "MaxPool", "input_shape": [104, 104, 64], "filter_size": [2, 2], "stride": 2, "padding": 0},
+    
+    {"name": "Conv4", "type": "Conv", "input_shape": [52, 52, 64], "filter_size": [3, 3], "filters": 128, "stride": 1, "padding": 1},
+    {"name": "MaxPool4", "type": "MaxPool", "input_shape": [52, 52, 128], "filter_size": [2, 2], "stride": 2, "padding": 0},
+    
+    {"name": "Conv5", "type": "Conv", "input_shape": [26, 26, 128], "filter_size": [3, 3], "filters": 256, "stride": 1, "padding": 1},
+    {"name": "MaxPool5", "type": "MaxPool", "input_shape": [26, 26, 256], "filter_size": [2, 2], "stride": 2, "padding": 0},
+    
+    {"name": "Conv6", "type": "Conv", "input_shape": [13, 13, 256], "filter_size": [3, 3], "filters": 512, "stride": 1, "padding": 1},
+    {"name": "MaxPool6", "type": "MaxPool", "input_shape": [13, 13, 512], "filter_size": [2, 2], "stride": 1, "padding": 0},  
+    
+    {"name": "Conv7", "type": "Conv", "input_shape": [13, 13, 512], "filter_size": [3, 3], "filters": 1024, "stride": 1, "padding": 1},
+    {"name": "Conv8", "type": "Conv", "input_shape": [13, 13, 1024], "filter_size": [3, 3], "filters": 1024, "stride": 1, "padding": 1},
+    
+    {"name": "DetectionLayer", "type": "Conv", "input_shape": [13, 13, 1024], "filter_size": [1, 1], "filters": 125, "stride": 1, "padding": 0}
+]
